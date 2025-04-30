@@ -4,6 +4,7 @@ import { MoreVert as MoreVertIcon, Description as DescriptionIcon, Download as D
 import Layout from '../components/Layout/Layout';
 import CustomButton from '../components/CustomButton/CustomButton';
 import { Add as AddIcon } from '@mui/icons-material';
+import { colors } from '../theme/colors';  // Add this import
 
 const DocumentosProjetoPage = () => {
   const documents = [
@@ -90,7 +91,7 @@ const DocumentosProjetoPage = () => {
             
             {documents.slice(0, 3).map((doc) => (
               <Box key={doc.id} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Avatar sx={{ bgcolor: '#6366F1', mr: 2, width: 32, height: 32 }}>
+                <Avatar sx={{ bgcolor: colors.primary, mr: 2, width: 32, height: 32 }}>
                   <DescriptionIcon fontSize="small" />
                 </Avatar>
                 <Box sx={{ flexGrow: 1 }}>

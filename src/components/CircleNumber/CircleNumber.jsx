@@ -1,7 +1,8 @@
 import React from 'react';
 import { Avatar } from '@mui/material';
+import { colors } from '../../theme/colors';
 
-const CircleNumber = ({ number, bgcolor = '#6366F1', ...props }) => {
+const CircleNumber = ({ number, bgcolor = colors.primary, ...props }) => {
   return (
     <Avatar 
       sx={{ 

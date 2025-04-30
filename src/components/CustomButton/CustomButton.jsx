@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@mui/material';
+import { colors } from '../../theme/colors';
 
 const CustomButton = ({ 
   children, 
@@ -19,10 +20,10 @@ const CustomButton = ({
         borderRadius: '25px',
         padding: '8px 24px',
         textTransform: 'none',
-        backgroundColor: variant === 'contained' ? '#6366F1' : 'transparent',
-        color: variant === 'contained' ? '#ffffff' : '#6366F1',
+        backgroundColor: variant === 'contained' ? colors.primary : 'transparent',
+        color: variant === 'contained' ? '#ffffff' : colors.primary,
         '&:hover': {
-          backgroundColor: variant === 'contained' ? '#4F46E5' : 'rgba(99, 102, 241, 0.04)',
+          backgroundColor: variant === 'contained' ? colors.primary : `rgba(${colors.primary}, 0.04)`,
         },
         ...props.sx
       }}

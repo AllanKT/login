@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Paper, Grid, Card, CardContent, CardHeader, Avatar, IconButton, Divider, Button } from '@mui/material';
 import { MoreVert as MoreVertIcon, Description as DescriptionIcon, Folder as FolderIcon } from '@mui/icons-material';
 import Layout from '../components/Layout/Layout';
+import { colors } from '../theme/colors';  // Add this import
 
 const DocumentsPage = () => {
   const documents = [
@@ -42,7 +43,7 @@ const DocumentsPage = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Avatar 
                   sx={{ 
-                    bgcolor: doc.type === 'folder' ? '#FCD34D' : '#6366F1', 
+                    bgcolor: doc.type === 'folder' ? '#FCD34D' : colors.primary, 
                     width: 40, 
                     height: 40,
                     mr: 2

@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Paper, Grid, Card, CardContent, Avatar, IconButton, Divider, Button, Chip } from '@mui/material';
 import { MoreVert as MoreVertIcon, Archive as ArchiveIcon, RestoreFromTrash as RestoreIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import Layout from '../components/Layout/Layout';
+import { colors } from '../theme/colors';  // Add this import
 
 const ArchivePage = () => {
   const archivedItems = [
@@ -44,7 +45,7 @@ const ArchivePage = () => {
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Avatar sx={{ bgcolor: '#6366F1', mr: 2 }}>
+              <Avatar sx={{ bgcolor: colors.primary, mr: 2 }}>
                 <ArchiveIcon />
               </Avatar>
               <Box sx={{ flexGrow: 1 }}>
@@ -80,70 +81,6 @@ const ArchivePage = () => {
         ))}
       </Paper>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, borderRadius: 2 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-              Estatísticas de Arquivo
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                Total de Itens Arquivados
-              </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 600, color: '#6366F1' }}>
-                {archivedItems.length}
-              </Typography>
-            </Box>
-            
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                Documentos
-              </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 600, color: '#6366F1' }}>
-                {archivedItems.filter(item => item.type === 'Documento').length}
-              </Typography>
-            </Box>
-            
-            <Box>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                Projetos
-              </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 600, color: '#6366F1' }}>
-                {archivedItems.filter(item => item.type === 'Projeto').length}
-              </Typography>
-            </Box>
-          </Paper>
-        </Grid>
-        
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, borderRadius: 2 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-              Informações Adicionais
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                Política de Retenção
-              </Typography>
-              <Typography variant="body1">
-                Os itens arquivados são mantidos por 12 meses antes da exclusão permanente.
-              </Typography>
-            </Box>
-            
-            <Box>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                Restauração
-              </Typography>
-              <Typography variant="body1">
-                Você pode restaurar itens arquivados a qualquer momento usando o botão de restauração.
-              </Typography>
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
     </Layout>
   );
 };

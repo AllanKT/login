@@ -3,13 +3,10 @@ import { Box, TextField, Button, Typography, ThemeProvider, createTheme, CssBase
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CustomButton from '../../components/CustomButton/CustomButton';
+import { colors } from '../../theme/colors';
 
 // Cores do tema
-const themeColors = {
-  primary: '#6B7A3E',
-  secondary: '#393E41',
-  background: '#F9E2C7'
-};
+const themeColors = colors;
 
 // Definindo a fonte global
 const theme = createTheme({

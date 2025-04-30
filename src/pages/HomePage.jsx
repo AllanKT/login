@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Paper, Grid, Card, CardContent, CardHeader, Avatar, IconButton, Divider } from '@mui/material';
 import { MoreVert as MoreVertIcon, TrendingUp as TrendingUpIcon } from '@mui/icons-material';
 import Layout from '../components/Layout/Layout';
+import { colors } from '../theme/colors';  // Add this import
 
 const HomePage = () => {
   return (
@@ -25,7 +26,7 @@ const HomePage = () => {
             
             {[1, 2, 3].map((item) => (
               <Box key={item} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Avatar sx={{ bgcolor: '#6366F1', mr: 2 }}>
+                <Avatar sx={{ bgcolor: colors.primary, mr: 2 }}>
                   <TrendingUpIcon />
                 </Avatar>
                 <Box>

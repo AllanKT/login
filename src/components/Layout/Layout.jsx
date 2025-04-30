@@ -58,21 +58,13 @@ import {
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import CircleNumber from '../CircleNumber/CircleNumber';
-
-// Cores do tema
-const themeColors = {
-  primary: '#6366F1',
-  secondary: '#393E41',
-  background: '#F9FAFB',
-  sidebar: '#ffffff',
-  header: '#ffffff'
-};
+import { colors } from '../../theme/colors';
 
 const drawerWidth = 240;
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
-  const location = useLocation(); // Adicionando o hook useLocation para obter a rota atual
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [mode, setMode] = useState(localStorage.getItem('themeMode') || 'light');
@@ -85,10 +77,10 @@ const Layout = ({ children }) => {
         palette: {
           mode,
           primary: {
-            main: themeColors.primary,
+            main: colors.primary,
           },
           secondary: {
-            main: themeColors.secondary,
+            main: colors.secondary,
           },
           background: {
             default: mode === 'light' ? '#F9FAFB' : '#121212',
@@ -105,10 +97,10 @@ const Layout = ({ children }) => {
                 borderRadius: '6px',
                 margin: '2px 8px',
                 '&.Mui-selected': {
-                  backgroundColor: mode === 'light' ? 'rgba(99, 102, 241, 0.08)' : 'rgba(99, 102, 241, 0.2)',
-                  color: themeColors.primary,
+                  backgroundColor: mode === 'light' ? `rgba(${colors.primary}, 0.08)` : `rgba(${colors.primary}, 0.2)`,
+                  color: colors.primary,
                   '& .MuiListItemIcon-root': {
-                    color: themeColors.primary,
+                    color: colors.primary,
                   },
                 },
               },
@@ -175,7 +167,7 @@ const Layout = ({ children }) => {
   const drawer = (
     <div>
       <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
-        <Avatar sx={{ bgcolor: '#6366F1', width: 32, height: 32, mr: 1.5 }}>R</Avatar>
+        <Avatar sx={{ bgcolor: colors.primary, width: 32, height: 32, mr: 1.5 }}>R</Avatar>
         <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
           Reserva do Vale
         </Typography>
@@ -374,7 +366,7 @@ const Layout = ({ children }) => {
           position="fixed" 
           sx={{ 
             zIndex: (theme) => theme.zIndex.drawer + 1,
-            bgcolor: themeColors.header,
+            bgcolor: colors.header,
             color: 'text.primary',
             width: { sm: `calc(100% - ${drawerWidth}px)` },
             ml: { sm: `${drawerWidth}px` },
@@ -432,7 +424,7 @@ const Layout = ({ children }) => {
                 sx={{ 
                   width: 32, 
                   height: 32,
-                  bgcolor: '#8B5CF6'
+                  bgcolor: colors.primary,
                 }}
               >
                 AF
@@ -504,7 +496,7 @@ const Layout = ({ children }) => {
               '& .MuiDrawer-paper': { 
                 boxSizing: 'border-box', 
                 width: drawerWidth,
-                bgcolor: themeColors.sidebar
+                bgcolor: colors.sidebar
               },
             }}
           >
@@ -517,7 +509,7 @@ const Layout = ({ children }) => {
               '& .MuiDrawer-paper': { 
                 boxSizing: 'border-box', 
                 width: drawerWidth,
-                bgcolor: themeColors.sidebar,
+                bgcolor: colors.sidebar,
                 borderRight: '1px solid #E5E7EB'
               },
             }}
@@ -542,7 +534,7 @@ const Layout = ({ children }) => {
               variant="contained" 
               startIcon={<AddIcon />} 
               sx={{ 
-                bgcolor: themeColors.primary, 
+                bgcolor: colors.primary, 
                 '&:hover': { bgcolor: '#4F46E5' },
                 mr: 2
               }}
