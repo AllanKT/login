@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Typography, Tabs, Tab, Button, TextField } from '@mui/material';
 import { User } from '../ListUsers';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface UserCreateProps {
   onBack: () => void;
@@ -22,7 +23,8 @@ interface EmergencyContact {
   email: string;
 }
 
-const UserCreate: React.FC<UserCreateProps> = ({ onBack }) => {
+const UserCreate: React.FC = () => {
+  const navigate = useNavigate();
   const [tabValue, setTabValue] = React.useState(0);
   const [formData, setFormData] = useState<PersonalInfo & EmergencyContact>({
     firstName: '',
@@ -47,6 +49,10 @@ const UserCreate: React.FC<UserCreateProps> = ({ onBack }) => {
         [field]: event.target.value,
       }));
     };
+
+  const onBack = () => {
+    navigate('/users');
+  };
 
   const handleSubmit = () => {
     console.log(formData);
@@ -128,11 +134,7 @@ const UserCreate: React.FC<UserCreateProps> = ({ onBack }) => {
                 value={formData.mobile}
                 onChange={handleChange('mobile')}
               />
-              <EditField 
-                label="Email" 
-                value={formData.email} 
-                onChange={handleChange('email')} 
-              />
+              <EditField label="Email" value={formData.email} onChange={handleChange('email')} />
             </Box>
           </Box>
 

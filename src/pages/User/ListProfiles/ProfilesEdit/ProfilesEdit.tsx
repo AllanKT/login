@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -14,9 +14,11 @@ import {
 } from '@mui/material';
 import ListProfiles, { Profile } from '../ListProfiles';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import { useNavigate, useParams } from 'react-router-dom';
+import Layout from '../../../../components/Layout/Layout_';
 
 interface Permission {
-  id: number;
+  id: number | string;
   action: string;
   escrita: boolean;
   leitura: boolean;
@@ -33,9 +35,12 @@ interface ProfilesEditProps {
   onBack: () => void;
 }
 
-const ProfilesEdit: React.FC<ProfilesEditProps> = ({ data, onBack }) => {
-  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+const ProfilesEdit: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
   const [isEditing, setIsEditing] = useState(false);
+  const [profileData, setProfileData] = useState<Profile | null>(null);
   const [editedPermissions, setEditedPermissions] = useState<PermissionGroup[]>([]);
 
   const [permissionGroups] = useState<PermissionGroup[]>([
@@ -140,6 +145,44 @@ const ProfilesEdit: React.FC<ProfilesEditProps> = ({ data, onBack }) => {
     },
   ]);
 
+  const onBack = () => {
+    navigate(`/profiles`);
+  };
+
+  useEffect(() => {
+    // Aqui você faria a chamada para sua API
+    // Por enquanto, vamos simular com dados mockados
+    const fetchUserData = async () => {
+      try {
+        // Simulando uma chamada à API
+        const mockData: Profile = {
+          id: id || '',
+          name: 'Administrador',
+          status: 'enable',
+          description: 'Administrador do sistema com maior privilegio',
+        };
+
+        setProfileData(mockData);
+      } catch (error) {
+        console.error('Erro ao buscar dados do usuário:', error);
+      }
+    };
+
+    if (id) {
+      fetchUserData();
+    }
+  }, [id]);
+
+  if (!profileData) {
+    return (
+      <Layout>
+        <Box sx={{ p: 3 }}>
+          <Typography>Carregando...</Typography>
+        </Box>
+      </Layout>
+    );
+  }
+
   const handleEdit = () => {
     setIsEditing(true);
     setEditedPermissions(permissionGroups);
@@ -162,9 +205,10 @@ const ProfilesEdit: React.FC<ProfilesEditProps> = ({ data, onBack }) => {
     setEditedPermissions(newPermissions);
   };
 
-  return selectedProfile ? (
-    <ListProfiles />
-  ) : (
+  // return selectedProfile ? (
+  //   <ListProfiles />
+  // ) :
+  return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Button startIcon={<ArrowBackIcon />} onClick={onBack} variant="text" color="primary">
@@ -185,7 +229,7 @@ const ProfilesEdit: React.FC<ProfilesEditProps> = ({ data, onBack }) => {
 
       <Box sx={{ mb: 4 }}>
         <Typography variant="h5" sx={{ mb: 1 }}>
-          Gerenciador de perfis de usuário: {data.name}
+          Gerenciador de perfis de usuário: {profileData.name}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           Total de usuários: 5

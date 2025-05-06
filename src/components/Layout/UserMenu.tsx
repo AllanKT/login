@@ -16,6 +16,7 @@ import {
   DarkMode as DarkModeIcon,
 } from '@mui/icons-material';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 
 interface UserMenuProps {
   anchorEl: null | HTMLElement;
@@ -30,6 +31,12 @@ interface UserMenuProps {
 
 const UserMenu: React.FC<UserMenuProps> = ({ anchorEl, handleClose, handleLogout, userData }) => {
   const { isDarkMode, toggleDarkMode } = useTheme();
+  const navigate = useNavigate();
+
+  const handleProfileClick = () => {
+    handleClose();
+    navigate('/settings/profile');
+  };
 
   return (
     <Menu
@@ -62,7 +69,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ anchorEl, handleClose, handleLogout
 
       <Divider />
 
-      <MenuItem onClick={handleClose}>
+      <MenuItem onClick={handleProfileClick}>
         <ListItemIcon>
           <PersonIcon fontSize="small" />
         </ListItemIcon>

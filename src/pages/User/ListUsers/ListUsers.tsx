@@ -19,9 +19,10 @@ import {
 import UserDetails from './UserDetails/UserDetails';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import UserCreate from './UserCreate/UserCreate';
+import { useNavigate } from 'react-router-dom';
 
 export interface User {
-  id: number;
+  id: number | string;
   name: string;
   nickname: string;
   email: string;
@@ -32,9 +33,8 @@ export interface User {
 }
 
 const ListUsers: React.FC = () => {
-  const [selecteduser, setSelectedUser] = useState<User | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [openNewUser, setNewUser] = useState(false);
+  const navigate = useNavigate();
 
   const users: User[] = [
     {
@@ -238,7 +238,7 @@ const ListUsers: React.FC = () => {
       color: 'info',
       variant: 'text',
       onClick: (user: User) => {
-        setSelectedUser(user);
+        navigate(`/users/${user.id}`);
       },
     },
     {
@@ -252,11 +252,7 @@ const ListUsers: React.FC = () => {
     },
   ];
 
-  return selecteduser ? (
-    <UserDetails data={selecteduser} onBack={() => setSelectedUser(null)} />
-  ) : openNewUser ? (
-    <UserCreate onBack={() => setNewUser(false)} />
-  ) : (
+  return (
     <Box
       sx={{
         flex: 1,
@@ -267,7 +263,7 @@ const ListUsers: React.FC = () => {
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-          <Button variant="contained" color="primary" onClick={() => setNewUser(true)}>
+          <Button variant="contained" color="primary" onClick={() => navigate(`/new-users`)}>
             Novo Usuário
           </Button>
         </Box>

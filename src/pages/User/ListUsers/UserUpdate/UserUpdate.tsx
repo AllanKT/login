@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Tabs, Tab, Avatar, Button, TextField } from '@mui/material';
 import { User } from '../ListUsers';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import { useNavigate, useParams } from 'react-router-dom';
+import Layout from '../../../../components/Layout/Layout_';
 
 interface UserUpdateProps {
   data: User;
@@ -24,7 +26,11 @@ interface EmergencyContact {
   email: string;
 }
 
-const UserUpdate: React.FC<UserUpdateProps> = ({ data, onBack }) => {
+const UserUpdate: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  const [userData, setUserData] = useState<User | null>(null);
   const [tabValue, setTabValue] = React.useState(0);
   const [formData, setFormData] = useState<PersonalInfo & EmergencyContact>({
     firstName: 'Jacob',
@@ -36,6 +42,47 @@ const UserUpdate: React.FC<UserUpdateProps> = ({ data, onBack }) => {
     mobile: '01524-789631',
     email: 'hello741@gmail.com',
   });
+
+  const onBack = () => {
+    navigate(`/users/${id}`);
+  };
+
+  useEffect(() => {
+    // Aqui você faria a chamada para sua API
+    // Por enquanto, vamos simular com dados mockados
+    const fetchUserData = async () => {
+      try {
+        // Simulando uma chamada à API
+        const mockData: User = {
+          id: id || '',
+          name: 'Albert Flores',
+          nickname: 'Albert',
+          email: 'flores@mail.com',
+          phone: '(+62)22-8765-5678',
+          status: 'Come out',
+          address: 'South Jakarta, Jakarta',
+        };
+
+        setUserData(mockData);
+      } catch (error) {
+        console.error('Erro ao buscar dados do usuário:', error);
+      }
+    };
+
+    if (id) {
+      fetchUserData();
+    }
+  }, [id]);
+
+  if (!userData) {
+    return (
+      <Layout>
+        <Box sx={{ p: 3 }}>
+          <Typography>Carregando...</Typography>
+        </Box>
+      </Layout>
+    );
+  }
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -66,10 +113,10 @@ const UserUpdate: React.FC<UserUpdateProps> = ({ data, onBack }) => {
 
       {/* Resto do conteúdo */}
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-        <Avatar src={data.avatar} sx={{ width: 80, height: 80, mr: 2 }} />
+        <Avatar src={userData.avatar} sx={{ width: 80, height: 80, mr: 2 }} />
         <Box>
           <Typography variant="h5" sx={{ mb: 1 }}>
-            {data.name}
+            {userData.name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Editando perfil do usuário

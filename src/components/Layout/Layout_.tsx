@@ -27,7 +27,6 @@ import {
   Tabs,
   Paper,
   Theme,
-  useMediaQuery,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -51,19 +50,17 @@ import {
   ChevronRight as ChevronRightIcon,
   Logout as LogoutIcon,
   Person as PersonIcon,
-  AdminPanelSettings as AdminPanelSettingsIcon,
   Apps as AppsIcon,
+  AdminPanelSettings as AdminPanelSettingsIcon,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { colors } from '../../theme/colors';
 import UserMenu from './UserMenu';
 import { ThemeProvider as CustomThemeProvider, useTheme } from '../../contexts/ThemeContext';
 import NotificationMenu from './NotificationMenu';
-import Bar from './Bar';
 
 interface LayoutProps {
   children: React.ReactNode;
-  window?: () => Window;
 }
 
 interface MenuSection {
@@ -82,12 +79,14 @@ interface MenuItem {
 
 const drawerWidth = 240;
 
-const Layout: React.FC<LayoutProps> = ({ children, window }) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const container = window !== undefined ? () => window().document.body : undefined;
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
-  const [isClosing, setIsClosing] = React.useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [notificationAnchorEl, setNotificationAnchorEl] = useState<null | HTMLElement>(null);
+  const [tabValue, setTabValue] = useState<number>(0);
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   const { mode } = useTheme();
 
   const theme = useMemo(
@@ -169,24 +168,29 @@ const Layout: React.FC<LayoutProps> = ({ children, window }) => {
     [mode]
   );
 
-  const handleDrawerClose = () => {
-    setIsClosing(true);
-    setMobileOpen(false);
+  const handleNotificationClick = (event: React.MouseEvent<HTMLElement>) => {
+    setNotificationAnchorEl(event.currentTarget);
   };
 
-  const handleDrawerTransitionEnd = () => {
-    setIsClosing(false);
+  const handleDrawerToggle = (): void => {
+    setMobileOpen(!mobileOpen);
   };
 
-  const handleDrawerToggle = () => {
-    if (!isClosing) {
-      setMobileOpen(!mobileOpen);
-    }
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>): void => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = (): void => {
+    setAnchorEl(null);
   };
 
   const handleLogout = (): void => {
     localStorage.removeItem('user');
     navigate('/login');
+  };
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number): void => {
+    setTabValue(newValue);
   };
 
   const menuSections: MenuSection[] = [
@@ -247,28 +251,21 @@ const Layout: React.FC<LayoutProps> = ({ children, window }) => {
   );
 
   const drawer = (
-    <Box
-      sx={{
-        height: '100%',
-        bgcolor: 'background.paper',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <Box sx={{ p: 5 }}>
-        <Box sx={{ mb: 4, mt: 2 }}>
-          {/* Aumentado o margin-top */}
-          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3 }}>
-            Reserva do Vale
-          </Typography>
-          <Typography variant="subtitle2" sx={{ color: 'text.secondary', mb: 2 }}>
-            GERAL
-          </Typography>
-        </Box>
-        <Divider />
+    <div>
+      <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
+        <Avatar sx={{ bgcolor: colors.primary, width: 32, height: 32, mr: 1.5 }}>R</Avatar>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+          Reserva do Vale
+        </Typography>
+      </Box>
+      <Divider />
 
-        {menuSections.map((section, index) => (
-          <List component="nav" sx={{ width: '100%' }}>
+      {menuSections.map((section, index) => (
+        <Box key={section.title} sx={{ mt: index === 0 ? 2 : 3 }}>
+          <Typography variant="caption" sx={{ px: 3, color: '#6B7280', fontWeight: 600 }}>
+            {section.title}
+          </Typography>
+          <List sx={{ mt: 0.5 }}>
             {section.items.map(item => (
               <React.Fragment key={item.id}>
                 {renderMenuItem(item)}
@@ -278,38 +275,13 @@ const Layout: React.FC<LayoutProps> = ({ children, window }) => {
               </React.Fragment>
             ))}
           </List>
-        ))}
+        </Box>
+      ))}
 
-        {/* {menuSections.map((section, index) => (
-          <Box key={section.title} sx={{ mt: index === 0 ? 2 : 3 }}>
-            <Typography variant="caption" sx={{ px: 3, color: '#6B7280', fontWeight: 600 }}>
-              {section.title}
-            </Typography>
-            <List sx={{ mt: 0.5 }}>
-              {section.items.map(item => (
-                <React.Fragment key={item.id}>
-                  {renderMenuItem(item)}
-                  {item.children && (
-                    <Box sx={{ pl: 4 }}>{item.children.map(child => renderMenuItem(child))}</Box>
-                  )}
-                </React.Fragment>
-              ))}
-            </List>
-          </Box>
-        ))} */}
-      </Box>
-
-      <Box
-        sx={{
-          mt: 'auto', // Alterado de position absolute para margin-top auto
-          width: '100%',
-          p: 2,
-          borderTop: '1px solid #f0f0f0', // Adicionado borda superior
-        }}
-      >
+      <Box sx={{ position: 'absolute', bottom: 0, width: '100%', p: 2 }}>
         <List>{footerMenuItems.map(item => renderMenuItem(item))}</List>
       </Box>
-    </Box>
+    </div>
   );
 
   return (
@@ -317,34 +289,76 @@ const Layout: React.FC<LayoutProps> = ({ children, window }) => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Box sx={{ display: 'flex' }}>
-          <Bar handleLogout={handleLogout} handleDrawerToggle={handleDrawerToggle} />
-          <Box
-            component="nav"
-            sx={{ height: 'calc(100% - 96px)', width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          <AppBar
+            position="fixed"
+            sx={{
+              zIndex: theme => theme.zIndex.drawer + 1,
+              bgcolor: colors.header,
+              color: 'text.primary',
+              width: { sm: `calc(100% - ${drawerWidth}px)` },
+              ml: { sm: `${drawerWidth}px` },
+              transition: 'width 0.2s, margin-left 0.2s',
+            }}
           >
+            <Toolbar>
+              <Box sx={{ flexGrow: 1 }} />
+
+              {/* Notificações */}
+              <IconButton color="inherit" sx={{ mr: 1 }} onClick={handleNotificationClick}>
+                <Badge badgeContent={8} color="primary">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <NotificationMenu
+                anchorEl={notificationAnchorEl}
+                handleClose={() => setNotificationAnchorEl(null)}
+              />
+
+              {/* Avatar do usuário com menu dropdown */}
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Avatar
+                  sx={{
+                    width: 48,
+                    height: 48,
+                    bgcolor: colors.info,
+                  }}
+                >
+                  AT
+                </Avatar>
+                <Typography variant="body2" sx={{ ml: 1, fontWeight: 500 }}>
+                  Allan Teotonio
+                </Typography>
+                <IconButton size="small" onClick={handleMenuClick}>
+                  <ExpandMoreIcon fontSize="small" />
+                </IconButton>
+                <UserMenu
+                  anchorEl={anchorEl}
+                  handleClose={handleMenuClose}
+                  handleLogout={handleLogout}
+                  userData={{
+                    name: user.nome || 'Usuário',
+                    email: user.email || 'email@exemplo.com',
+                    avatar: user.avatar,
+                  }}
+                />
+              </Box>
+            </Toolbar>
+          </AppBar>
+
+          <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
             <Drawer
-              container={container}
               variant="temporary"
               open={mobileOpen}
-              onTransitionEnd={handleDrawerTransitionEnd}
-              onClose={handleDrawerClose}
+              onClose={handleDrawerToggle}
+              ModalProps={{
+                keepMounted: true,
+              }}
               sx={{
                 display: { xs: 'block', sm: 'none' },
                 '& .MuiDrawer-paper': {
                   boxSizing: 'border-box',
                   width: drawerWidth,
-                  m: 2,
-                  mt: '100px', // Adicionado margem superior
-                  borderRadius: 3,
-                  boxShadow: '0 4px 12px 0 rgba(0,0,0,0.1)',
-                  height: `calc(100% - ${drawerWidth}px + 110px)`, // Ajustado para considerar a margem superior
-                  border: '1px solid #f0f0f0',
-                  zIndex: theme.zIndex.drawer,
-                },
-              }}
-              slotProps={{
-                root: {
-                  keepMounted: true,
+                  bgcolor: colors.sidebar,
                 },
               }}
             >
@@ -357,13 +371,8 @@ const Layout: React.FC<LayoutProps> = ({ children, window }) => {
                 '& .MuiDrawer-paper': {
                   boxSizing: 'border-box',
                   width: drawerWidth,
-                  m: 2,
-                  mt: '110px', // Adicionado margem superior
-                  borderRadius: 3,
-                  boxShadow: '0 4px 12px 0 rgba(0,0,0,0.1)',
-                  height: `calc(100% - ${drawerWidth}px + 110px)`, // Ajustado para considerar a margem superior
-                  border: '1px solid #f0f0f0',
-                  zIndex: theme.zIndex.drawer,
+                  bgcolor: colors.sidebar,
+                  borderRight: '1px solid #E5E7EB',
                 },
               }}
               open
@@ -377,13 +386,13 @@ const Layout: React.FC<LayoutProps> = ({ children, window }) => {
               flexGrow: 1,
               p: 3,
               width: { sm: `calc(100% - ${drawerWidth}px)` },
-              mt: '110px',
-              mx: { xs: 3, sm: 4, md: 6, lg: 8 }, // Margens laterais responsivas
-              bgcolor: '#F9FAFB',
-              overflow: 'auto',
-              height: 'calc(100vh - 110px)',
-              maxWidth: '1400px', // Largura máxima
-              margin: '110px auto 0', // Centralização horizontal
+              mt: '96px',
+              mx: { xs: 3, sm: 4, md: 6, lg: 8 }, // Margens laterais
+              bgcolor: colors.header,
+              borderRadius: 3,
+              boxShadow: '0 4px 12px 0 rgba(0,0,0,0.1)',
+              overflow: 'auto', // Adicionado overflow
+              height: 'calc(100vh - 130px)', // Altura ajustada
             }}
           >
             {children}

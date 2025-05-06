@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -15,8 +15,9 @@ import {
 } from '@mui/material';
 import { User } from '../ListUsers';
 import { ArrowBack as ArrowBackIcon, Warning as WarningIcon } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import UserUpdate from '../UserUpdate/UserUpdate';
+import Layout from '../../../../components/Layout/Layout_';
 
 interface UserDetailsProps {
   data: User;
@@ -47,15 +48,57 @@ interface Transaction {
   amount: number;
 }
 
-const UserDetails: React.FC<UserDetailsProps> = ({ data, onBack }) => {
+const UserDetails: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState<User | null>(null);
+
   const [tabValue, setTabValue] = React.useState(0);
-  const [selecteduser, setSelectedUser] = useState<User | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    // Aqui você faria a chamada para sua API
+    // Por enquanto, vamos simular com dados mockados
+    const fetchUserData = async () => {
+      try {
+        // Simulando uma chamada à API
+        const mockData: User = {
+          id: id || '',
+          name: 'Albert Flores',
+          nickname: 'Albert',
+          email: 'flores@mail.com',
+          phone: '(+62)22-8765-5678',
+          status: 'Come out',
+          address: 'South Jakarta, Jakarta',
+        };
+
+        setUserData(mockData);
+      } catch (error) {
+        console.error('Erro ao buscar dados do usuário:', error);
+      }
+    };
+
+    if (id) {
+      fetchUserData();
+    }
+  }, [id]);
+
+  if (!userData) {
+    return (
+      <Layout>
+        <Box sx={{ p: 3 }}>
+          <Typography>Carregando...</Typography>
+        </Box>
+      </Layout>
+    );
+  }
 
   const handleDeleteClick = () => {
     setOpenDeleteDialog(true);
+  };
+
+  const onBack = () => {
+    navigate('/users');
   };
 
   const handleDeleteConfirm = () => {
@@ -73,8 +116,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ data, onBack }) => {
   };
 
   const handleEdit = () => {
-    // navigate('/user/update', { state: { user: selecteduser } });
-    setSelectedUser(data);
+    navigate(`/users/${id}/edit`);
   };
 
   const personalInfo: PersonalInfo = {
@@ -104,9 +146,11 @@ const UserDetails: React.FC<UserDetailsProps> = ({ data, onBack }) => {
     // ... Adicione mais transações conforme necessário
   ];
 
-  return selecteduser ? (
-    <UserUpdate data={selecteduser} onBack={() => setSelectedUser(null)} />
-  ) : (
+  // return userData ? (
+  //   <UserUpdate data={userData} onBack={() => setUserData(null)} />
+  // ) :
+
+  return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Button startIcon={<ArrowBackIcon />} onClick={onBack} variant="text" color="primary">
@@ -122,10 +166,10 @@ const UserDetails: React.FC<UserDetailsProps> = ({ data, onBack }) => {
         </Box>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-        <Avatar src={data.avatar} sx={{ width: 80, height: 80, mr: 2 }} />
+        <Avatar src={userData.avatar} sx={{ width: 80, height: 80, mr: 2 }} />
         <Box>
           <Typography variant="h5" sx={{ mb: 1 }}>
-            {data.name}
+            {userData.name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Rent from Jun 2024

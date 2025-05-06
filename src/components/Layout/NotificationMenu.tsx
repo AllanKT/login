@@ -129,8 +129,11 @@ const NotificationMenu: React.FC<{
         sx: {
           mt: 1,
           width: 380,
-          maxHeight: 600,
+          maxHeight: '80vh',
           boxShadow: '0px 2px 8px rgba(0,0,0,0.15)',
+          '& .MuiList-root': {
+            padding: 0,
+          },
         },
       }}
     >
@@ -189,9 +192,37 @@ const NotificationMenu: React.FC<{
         </Tabs>
       </Box>
 
-      <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
+      <Box 
+        sx={{ 
+          maxHeight: 'calc(80vh - 200px)', 
+          overflow: 'auto',
+          '&::-webkit-scrollbar': {
+            width: '6px',
+          },
+          '&::-webkit-scrollbar-track': {
+            background: 'transparent',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: 'rgba(0,0,0,0.2)',
+            borderRadius: '3px',
+          },
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(0,0,0,0.2) transparent',
+        }}
+      >
         {filteredNotifications.map(notification => (
-          <MenuItem key={notification.id} sx={{ py: 2, px: 2 }}>
+          <MenuItem 
+            key={notification.id} 
+            sx={{ 
+              py: 2, 
+              px: 2,
+              width: '100%',
+              whiteSpace: 'normal',
+              '& .MuiBox-root': {
+                width: '100%'
+              }
+            }}
+          >
             <Box sx={{ display: 'flex', width: '100%' }}>
               {notification.avatar || notification.initials ? (
                 <StyledBadge
@@ -212,15 +243,33 @@ const NotificationMenu: React.FC<{
               ) : (
                 <Avatar sx={{ width: 40, height: 40 }} />
               )}
-              <Box sx={{ ml: 2, flex: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 0.5 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              <Box sx={{ ml: 2, flex: 1, maxWidth: 'calc(100% - 56px)' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 0.5, flexWrap: 'wrap' }}>
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      fontWeight: 500,
+                      wordBreak: 'break-word'
+                    }}
+                  >
                     {notification.userName}
                   </Typography>
-                  <Typography variant="body2" sx={{ mx: 0.5 }}>
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      mx: 0.5,
+                      wordBreak: 'break-word'
+                    }}
+                  >
                     {notification.action}
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      fontWeight: 500,
+                      wordBreak: 'break-word'
+                    }}
+                  >
                     {notification.target}
                   </Typography>
                 </Box>
@@ -251,8 +300,20 @@ const NotificationMenu: React.FC<{
                 )}
 
                 {notification.fileInfo && (
-                  <Box sx={{ mt: 1, p: 1, bgcolor: '#F3F4F6', borderRadius: 1 }}>
-                    <Typography variant="caption">
+                  <Box sx={{ 
+                    mt: 1, 
+                    p: 1, 
+                    bgcolor: '#F3F4F6', 
+                    borderRadius: 1,
+                    wordBreak: 'break-word'
+                  }}>
+                    <Typography 
+                      variant="caption" 
+                      sx={{
+                        display: 'block',
+                        wordBreak: 'break-word'
+                      }}
+                    >
                       📄 {notification.fileInfo.name} • {notification.fileInfo.size}
                     </Typography>
                   </Box>

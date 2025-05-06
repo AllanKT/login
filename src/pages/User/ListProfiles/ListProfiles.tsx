@@ -8,9 +8,10 @@ import {
 } from '@mui/icons-material';
 import DataTable, { ActionButton } from '../../../components/DataTable/DataTable';
 import ProfilesEdit from './ProfilesEdit/ProfilesEdit';
+import { useNavigate } from 'react-router-dom';
 
 export interface Profile {
-  id: number;
+  id: number | string;
   name: string;
   status: string;
   icon?: React.ReactNode;
@@ -18,6 +19,8 @@ export interface Profile {
 }
 
 const ListProfiles: React.FC = () => {
+  const navigate = useNavigate();
+
   const profiles: Profile[] = [
     {
       id: 1,
@@ -171,7 +174,8 @@ const ListProfiles: React.FC = () => {
       color: 'info',
       variant: 'text',
       onClick: (profile: Profile) => {
-        setSelectedProfile(profile);
+        // setSelectedProfile(profile);
+        navigate(`/profiles/${profile.id}/edit`);
       },
     },
     // {
@@ -183,9 +187,10 @@ const ListProfiles: React.FC = () => {
     // },
   ];
 
-  return selectedProfile ? (
-    <ProfilesEdit data={selectedProfile} onBack={() => setSelectedProfile(null)} />
-  ) : (
+  // return selectedProfile ? (
+  //   <ProfilesEdit data={selectedProfile} onBack={() => setSelectedProfile(null)} />
+  // ) :
+  return (
     <Box
       sx={{
         flex: 1,

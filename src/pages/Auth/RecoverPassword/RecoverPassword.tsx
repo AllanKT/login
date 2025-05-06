@@ -9,10 +9,12 @@ import {
   CssBaseline,
   Grid,
   Link,
+  CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { colors } from '../../theme/colors';
+import { colors } from '../../../theme/colors';
+import { isValidEmail, formattedEmail } from '../../../utils/validations/email';
 
 interface FormData {
   email: string;
@@ -88,24 +90,38 @@ const theme = createTheme({
   },
 });
 
-const Login: React.FC = () => {
+const RecoverPassword: React.FC = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState<FormData>({
     email: '',
     senha: '',
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    if (name === 'email') {
+      setFormData({
+        ...formData,
+        [name]: formattedEmail(value),
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
+    setLoading(true);
+
     try {
       // const response = await axios.post<LoginResponse>('sua-api/login', formData);
+      await new Promise(resolve => setTimeout(resolve, 6000));
 
       const response = {
         status: 200,
@@ -117,11 +133,13 @@ const Login: React.FC = () => {
       };
 
       if (response.status === 200) {
-        localStorage.setItem('user', JSON.stringify(response.data));
-        navigate('/');
+        // localStorage.setItem('user', JSON.stringify(response.data));
+        navigate('/recover-password-code');
       }
     } catch (error) {
       alert('Erro ao fazer login');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -131,9 +149,12 @@ const Login: React.FC = () => {
       <Box
         sx={{
           display: 'flex',
+          position: 'relative',
+          border: '1px solid #E5E7EB',
+          borderRadius: '10px',
+          overflow: 'hidden',
           width: '100vw',
           height: '100vh',
-          overflow: 'hidden',
         }}
       >
         {/* Lado esquerdo - Formulário */}
@@ -170,7 +191,7 @@ const Login: React.FC = () => {
               Bem Vindo!
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-              Para você conectar à sua conta, preencha seu endereço de email e senha.
+              Para você recuperar sua senha, preencha seu endereço de email.
             </Typography>
 
             <form onSubmit={handleSubmit}>
@@ -184,46 +205,22 @@ const Login: React.FC = () => {
                 onChange={handleChange}
                 margin="normal"
                 variant="outlined"
+                error={formData.email !== '' && !isValidEmail(formData.email)}
+                helperText={
+                  formData.email !== '' && !isValidEmail(formData.email) ? 'Email inválido' : ''
+                }
+                placeholder="exemplo@email.com"
                 sx={{ mb: 2 }}
                 InputProps={{
                   sx: { height: '48px' },
                 }}
               />
 
-              <Typography variant="body2" sx={{ mb: 1 }}>
-                Sua senha
-              </Typography>
-              <TextField
-                fullWidth
-                name="senha"
-                type="password"
-                value={formData.senha}
-                onChange={handleChange}
-                margin="normal"
-                variant="outlined"
-                sx={{ mb: 1 }}
-                InputProps={{
-                  sx: { height: '48px' },
-                }}
-              />
-
-              <Link
-                href="#"
-                underline="none"
-                sx={{
-                  display: 'block',
-                  mb: 3,
-                  color: colors.primary,
-                  fontSize: '0.8rem',
-                }}
-              >
-                Esqueceu sua senha?
-              </Link>
-
               <Button
                 fullWidth
                 type="submit"
                 variant="contained"
+                disabled={loading}
                 sx={{
                   height: '48px',
                   mb: 2,
@@ -237,7 +234,21 @@ const Login: React.FC = () => {
                   },
                 }}
               >
-                Entrar
+                {loading ? (
+                  <CircularProgress
+                    size={24}
+                    sx={{
+                      color: '#fff',
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      marginTop: '-12px',
+                      marginLeft: '-12px',
+                    }}
+                  />
+                ) : (
+                  'Recuperar Senha'
+                )}
               </Button>
             </form>
 
@@ -307,27 +318,10 @@ const Login: React.FC = () => {
               zIndex: 1,
             }}
           />
-          {/* <Box sx={{ 
-            maxWidth: '80%',
-            p: 4,
-            bgcolor: 'rgba(255, 255, 255, 0.7)',
-            borderRadius: 2,
-            backdropFilter: 'blur(5px)',
-            boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
-            zIndex: 2,
-            position: 'relative'
-          }}>
-            <Typography variant="h5" component="h2" sx={{ mb: 2, color: colors.secondary, fontWeight: 500 }}>
-              Medicina de precisão é o novo padrão ouro para tratamento de câncer
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              O relatório interativo resultante inclui informações atualizadas sobre tratamentos aprovados ou investigacionais para cada paciente.
-            </Typography>
-          </Box> */}
         </Box>
       </Box>
     </ThemeProvider>
   );
 };
 
-export default Login;
+export default RecoverPassword;
